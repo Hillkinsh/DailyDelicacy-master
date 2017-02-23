@@ -8,4 +8,5 @@
 
 3，在weex playground app中运行
     1,打开weex playground app,
-    2,打开二维码扫描。
+    2,打开二维码扫描。
+项目效果：在DemoScreenShots文件夹
