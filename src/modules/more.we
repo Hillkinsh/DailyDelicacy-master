@@ -1,0 +1,110 @@
+
+<template>
+    <div>
+        <div class="title">
+          <text class="text">美食网址</text>
+        </div>
+        <div class="showLogo">
+            <div repeat="item in itemList">
+                <a href="{{item.siteUrl}}"><image class="logo" src="{{item.logoURL}}"></image></a>
+            </div>
+        </div>
+        <div class="title">
+          <text class="text">美食公众号</text>
+        </div>
+        <div class="showLogo">
+           <div repeat="item in accountsList">
+                <a href="{{item.accounts}}"><image class="alogo" src="{{item.logo}}"></image></a>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+    .title{
+        padding:22;
+    }
+    .text{
+      font-size: 40;
+      color: #2D2D2D;
+      font-weight:bold;
+      font-family:STKaiti;/* TODO 字体设置;*/
+    }
+    .showAccounts{
+        flex-direction: row;
+        flex-wrap:wrap;
+        width:750;
+    }
+    .showLogo{
+        flex-direction: row;
+        flex-wrap:wrap;
+        width:750;
+    }
+    .logo{
+        width:210;
+        height:88;
+        margin-top:25;
+        margin-right:20;
+        margin-bottom:25;
+        margin-left:20;
+        border-radius:20;
+    }
+    .alogo{
+        width:210;
+        height:80;
+        margin-left:20;
+        margin-right:20;
+        margin-top:30;
+        border-radius:20;
+    }
+</style>
+<script>
+    var PAGE_URL = 'http://dotwe.org/raw/dist/f1fa0895d0fa0fd80896e02a589443dd.js';
+    module.exports={
+        data: {
+            itemList:[],
+            accountsList:[]
+        },
+        created:function(){
+            var self=this;
+            var origionUrl= [{logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/5Mxw*RghBkbzJTqubu04FXMDxtqbMRRsACCf8Qh4d3A!/r/dCABAAAAAAAA',siteUrl:'http://m.meishij.net/html5/'},//<!--美食杰-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/nz8kjkiWK1rbmiQ8nh9FwoETT*GtmHxcAcYrwe06BHQ!/r/dPYAAAAAAAAA',siteUrl:'http://m.zhms.cn/'},//<!--中华美食网-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/rxW6h6VOaSzlRzK8WumfIZ5AI3uoV2sWHQTEQj7dbdo!/r/dPYAAAAAAAAA',siteUrl:'http://m.haodou.com/'},//<!--好豆网-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/FysP6TxTqV9OOEFZs*4V1v.NNFKzl5K7ALHQdv2FcJc!/r/dLAAAAAAAAAA',siteUrl:'http://www.xinshipu.com/'},//<!--心食谱-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/1j.C83sCq.DGl7gTcXyniJtjwKfNlNLD2sS9NQuEYZg!/r/dCABAAAAAAAA',siteUrl:'http://m.xiangha.com/'},//<!--香哈网-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/ju1Kh1QwrBdyo3k6zRbxSLaayE4NgWvMwFkV2RJrUVU!/r/dCABAAAAAAAA',siteUrl:'http://m.chinacaipu.com/'},//<!--中国菜谱网-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/MkE8*e0DsKCCeWGFyJVybHkiaFPXRn7Z1DEB6bOqMyo!/r/dCABAAAAAAAA',siteUrl:'http://m.meishic.com/'},//<!--美食城-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/Tja7qTOKOhLcxUW91gIyN3hPVkQl1BJNU6W1kPTqJkI!/r/dB8BAAAAAAAA',siteUrl:'http://m.xiachufang.com/'},//<!--下厨房-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/O8sD8ixo*pjtP0vT3PH0W0HO4l0W56Otf7lglWQRMjA!/r/dPYAAAAAAAAA',siteUrl:'http://m.fancai.com/'},//<!--饭菜网-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/h9ZeEq1pjWGkFFjD8CqmVYImRgVx1rF3zqm1a36f8xg!/r/dB8BAAAAAAAA',siteUrl:'http://m.haochi123.com/'},//<!--123美食网-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/YGwsT9JhcRgy8JmI2RtkuoO.TCpX.KkGcCBJaIGOTFg!/r/dB8BAAAAAAAA',siteUrl:'http://m.douguo.com/?f=www'},//<!--果豆网-->
+                {logoURL:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/5lefXWIylGLpSQYpYYyXlScPsDJd41u1p.g3K44NpNU!/r/dB8BAAAAAAAA',siteUrl:'http://m.meishichina.com/'}//<!--美食天下-->
+            ];
+
+            self.itemList=origionUrl;
+            for(var i=0;i<self.itemList.length;i++){
+                console.log(self.itemList[i].logoURL);
+                console.log(self.itemList[i].siteUrl);
+                self.itemList[i].siteUrl=PAGE_URL + '?weburl=' +encodeURIComponent(origionUrl[i].siteUrl);
+            }
+            var origionLink=[{logo:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/Ri3eCqP3Kl719WxPk1ZM8PBDCZwKgpbwghyTGL1JAXA!/r/dB8BAAAAAAAA',accounts:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/cSBv9yqTWVzdym9wauISYcYBhA.t6HW8*ZYsiQ8uRg4!/r/dPYAAAAAAAAA'},//食材砖家
+                           {logo:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/KmEarcH3h1HmyVImxXOiQwGPPTdb5o9PySHFbetpNN8!/r/dB8BAAAAAAAA',accounts:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/WJsES7vP29IGktgC1WjhwQZ5.CfNraqGMfrZVXSu0jM!/r/dB8BAAAAAAAA'},//美食工场
+                           {logo:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/1tx4orEdQ9xIeyPDtW*seI7I3V9.lmunXc.Jv1yfirA!/r/dB8BAAAAAAAA',accounts:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/.O7afpnLKBKSfwtuwmjVYt9oY4Pqcb.QfC3WTDqXwhI!/r/dCABAAAAAAAA'},//三味食堂
+                            {logo:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/2aOp8VukDCfe6oNmUaUb4Udevj7BCxrOB63OCUV3Nk8!/r/dB8BAAAAAAAA',accounts:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/nDkIXMrnSlYa2jbpAZzTwNCkrACe6Nv93b5h16UNzw0!/r/dK0AAAAAAAAA'},//觅食攻略
+                            {logo:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/tnnw1jdckCR3eOQjcw.tg4CvtI7YZYNLJVuXpz73Ejs!/r/dPgAAAAAAAAA',accounts:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/oexD.uZLhG0e.5faRJKTtmiBK07VhRe5Q6VBURGSwK8!/r/dCABAAAAAAAA'},//不老时光
+                            {logo:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/Tkxhppbtujvg2t3ghoRxVBQhMZs.LN01Z.Z0xMsBb2Q!/r/dB8BAAAAAAAA',accounts:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/7wAFQ8g7hMwFjCTT4iPNXkovql0Q6LSOItnsB.eDNEw!/r/dB8BAAAAAAAA'},//食客先锋
+                            {logo:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/d3Nos5Pfn8QGZNxq9Ln88b47ZVUEfrL8TnmTwMpkgRk!/r/dPYAAAAAAAAA',accounts:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/hSXf4C.zE8EKFN5MaHMkalJaIT2urYp0vsTuk3QN8HE!/r/dCABAAAAAAAA'},//美食工坊
+                            {logo:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/Ygi3I.YipSys5FcknNcNRd56Yd3AyUcChPJnFPcMGKE!/r/dB8BAAAAAAAA',accounts:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/CVtiV3cO48vl.nljQ2SGxdPTSjBh4vl9CI23zji74Hs!/r/dPYAAAAAAAAA'},//吃很重要
+                            {logo:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/qvqxd7LX7CuUIGYJDvWmtEthPYCeI6pxW*90J4k*ZGU!/r/dCABAAAAAAAA',accounts:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/qKB8rLSQOVHZOx6g1MjTDNNka8PeOTenKSRNPrKEjjE!/r/dB8BAAAAAAAA'}//深夜谈吃
+            ];
+             self.accountsList=origionLink;
+            for(var j=0;j<origionLink.length;j++){
+               console.log(self.accountsList[j].logo);
+               console.log(self.accountsList[j].accounts);
+               self.accountsList[j].accounts=PAGE_URL + '?weburl=' +encodeURIComponent(origionLink[j].accounts);
+            }
+
+        }
+    }
+    </script>
+

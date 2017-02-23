@@ -1,0 +1,61 @@
+<template>
+    <div style="flex-direction: column;">
+        <wxc-tabbar tab-items={{tabItems}}></wxc-tabbar>
+    </div>
+</template>
+
+<script>
+    require('weex-components');
+    var apis = require('./common/api');
+
+    module.exports = {
+        data: {
+            tabItems: [
+                {
+                    index: 0,
+                    title: "推荐",
+                    titleColor: 0x0,
+                    icon: "",
+                    image: "http://gtms01.alicdn.com/tps/i1/TB1qw.hMpXXXXagXXXX9t7RGVXX-46-46.png",
+                    selectedImage: "http://gtms04.alicdn.com/tps/i4/TB16jjPMpXXXXazXVXX9t7RGVXX-46-46.png",
+                    src: "modules/recommend.js",
+                    visibility: "visible"
+                },
+                {
+                    index: 1,
+                    title: "搜索",
+                    titleColor: 0x0,
+                    icon: "",
+                    image: "http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/PGSst3VP9fBFpXBAHLNuaFAw.zqAz9hEE9GmV0NN3Ac!/r/dB8BAAAAAAAA",
+                    selectedImage: "http://a2.qpic.cn/psb?/V10fxxpZ03oqxO/5bqhXjlPB9mge.PvEluc5rEKWEETLuI*sr.ANpl7Dl8!/b/dPoAAAAAAAAA&bo=yADIAMgAyAADACU!&rf=viewer_4",
+                    src: "modules/searchMenu.js",
+                    visibility: "hidden"
+                },
+                {
+                    index: 2,
+                    title: "更多",
+                    titleColor: 0x0,
+                    icon: "",
+                    image: "http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/M6Lxbi31J9F9nYfpDEYwagZfrBNSYJxdgSdyChYaDF4!/r/dB8BAAAAAAAA",
+                    selectedImage: "http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/JtJXQK7bwBhBcTvBznys8oWHp*sEcaVCKBcGMA81MUs!/r/dB8BAAAAAAAA",
+                    src: "modules/more.js",
+                    visibility: "hidden"
+                }
+            ]
+        },
+        created: function () {
+
+            var bundleUrl = this.$getConfig().bundleUrl;
+            var base = apis.getBaseUrl(bundleUrl);
+            for (var i = 0; i < this.tabItems.length; i++) {
+                var tabItem = this.tabItems[i];
+                tabItem.src = base + tabItem.src;
+            }
+        },
+        methods: {
+            created: function (e) {
+
+            }
+        }
+    }
+</script>

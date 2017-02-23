@@ -1,0 +1,372 @@
+<!--
+    修改：1，搜索先确定再搜索的问题，
+         2，修改history显示。
+    TODO:1，当数据库没有内容是对应的返回页面。
+         2，数据在三端的显示兼容问题。
+                              -2017.1.1
+-->
+<template>
+    <div>
+     <div class="search">
+            <input type="text" autofocus="false" class="search_box" oninput="oninput"  placeholder="Search"/>
+            <image  class="search_box_s" onclick="search" alt="Search" src="http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/V**tgjWnxcsZIxBGT*kSISNqXSxhL6Rl8djgtrUcDoo!/r/dKkAAAAAAAAA" title="Search" />
+      </div>
+      <div id="history" class="his">
+
+     <!--     <list>
+            <cell repeat="(i, v) in items">
+              <text>{{v}}</text>
+            </cell>
+          </list>
+      -->
+      </div>
+     <scroller>
+        <div class="classtitle">
+            <text class="text">热门分类</text>
+        </div>
+        <div class="showLogo">
+            <div class="showarea" repeat="item in hotList">
+                <image class="logo" src="{{item.tagurl}}" onclick="detailList" cid="{{item.tags}}"></image>
+                <div class="namearea"><text class="classname">{{item.tags}}</text></div>
+            </div>
+        </div>
+        <div class="classtitle">
+            <text class="text">烹饪方式</text>
+        </div>
+        <div class="showLogo">
+            <div class="showarea" repeat="item in methodList">
+                <image class="logo" src="{{item.tagurl}}" onclick="detailList" cid="{{item.tags}}"></image>
+                <div class="namearea"><text class="classname">{{item.tags}}</text></div>
+            </div>
+        </div>
+         <div class="classtitle">
+              <text class="text">季节分类</text>
+         </div>
+        <div class="showLogo">
+            <div class="showarea" repeat="item in seasonList">
+                <image class="logo" src="{{item.tagurl}}" onclick="detailList" cid="{{item.tags}}"></image>
+                <div class="namearea"><text class="classname">{{item.tags}}</text></div>
+            </div>
+        </div>
+
+         <div class="classtitle">
+                    <text class="text">场景分类</text>
+          </div>
+        <div class="showLogo">
+            <div class="showarea" repeat="item in sceneList" >
+                <image class="logo" src="{{item.tagurl}}" onclick="detailList" cid="{{item.tags}}"></image>
+                <div class="namearea"><text class="classname">{{item.tags}}</text></div>
+            </div>
+        </div>
+         <div class="classtitle">
+                    <text class="text">人群分类</text>
+        </div>
+        <div class="showLogo">
+            <div class="showarea" repeat="item in personList">
+                <image class="logo" src="{{item.tagurl}}" onclick="detailList" cid="{{item.tags}}"></image>
+                <div class="namearea"><text class="classname">{{item.tags}}</text></div>
+            </div>
+        </div>
+    </scroller>
+  </div>
+</template>
+
+<style>
+    .search{
+      flex-direction: row;
+    }
+    .search_box {
+      margin:10;
+      margin-left:35;
+      padding:10;
+      width:575;
+      height:85;
+      border-radius:30px;
+      border-color:#1afa29;
+      border-width:1;
+      border-style:solid;
+    }
+    .search_box_s {
+      margin:10;
+      width:85;
+      height:85;
+    }
+    .bgPic{
+      top:105;
+      margin-left:5;
+      margin-right:5;
+      position:absolute;
+    }
+    .bgPicture{
+      width:740;
+      height:1100;
+    }
+    .his{
+      align-items:center;
+    }
+    .search_res{
+      top:105;
+      flex-direction: column;
+      position:absolute;
+      margin-left:5;
+      width: 740;
+      margin-right:5;
+
+  }
+    .search_item{
+      flex-direction: row;
+      padding:5;
+      border-bottom-width: 1;
+      border-bottom-color: #efefef;
+      background-color: wheat;
+
+  }
+    .search-items{
+      flex-direction: row;
+    }
+  .item-imgbox {
+      height: 250;
+      width: 250;
+      margin-right:20;
+  }
+    .item-img {
+      width: 250;
+      height: 250;
+      border-radius:50px;
+    }
+    .item-info {
+      height: 250;
+      width: 410;
+      justify-content: center;
+      position: relative;
+  }
+  .item-info-detail {
+    position: relative;
+    color: #A2A2A2;
+  }
+  .title {
+    lines: 1;
+    text-overflow: ellipsis;
+    font-size: 32;
+    color: #2D2D2D;
+    line-height: 40;
+  }
+  .detail-info {
+    margin-top: 15;
+  }
+  .desc {
+    lines: 5;
+    text-overflow: ellipsis;
+    font-size: 26;
+    line-height: 30;
+    color: #A2A2A2;
+  }
+      .classtitle{
+       margin-top:30;
+       margin-left:30;
+      }
+      .text{
+          font-size: 40;
+          color: #2D2D2D;
+          font-family:STKaiti;/* TODO 字体设置;*/
+      }
+      .showLogo{
+          flex-direction: row;
+          flex-wrap:wrap;
+          width:750;
+          margin-left:20;
+      }
+      .showarea{
+          width:180;
+          height:170;
+      }
+      .logo{
+          width:150;
+          height:150;
+          margin-top:25;
+          margin-right:10;
+          margin-bottom:25;
+          margin-left:10;
+          border-radius:20;
+      }
+      .namearea{
+        left:10;
+        top:140;
+        width:150;
+        position:absolute;
+        background-color: green;
+        opacity: 0.5;
+        align-items:center;
+        border-bottom-right-radius:15;
+  　　  border-bottom-left-radius:15;
+      }
+      .classname{
+       font-weight:bold;
+       color:white;
+       font-family:STKaiti;/* TODO 字体设置;*/
+      }
+</style>
+<script>
+      var storage=require('@weex-module/storage');
+      var dom = require('@weex-module/dom') || {}
+      var stream = require('@weex-module/stream') || {}
+      var modal = require('@weex-module/modal') || {}
+      var navigator = require('@weex-module/navigator');
+      var apis = require('../common/api');
+      var SEARCH_URL = 'http://apis.juhe.cn/cook/query?&pn=&rn=&albums=&=&key=02679548e0e9bbce015c132666f8ea9e';
+    module.exports = {
+        data : {
+            NoFoodList:true,//等下修改。
+            items:[],
+            searchRes:[],
+            keywords:'',
+            hotList: [],
+            methodList:[],
+            seasonList:[],
+            sceneList:[],
+            personList:[]
+        },
+        created:function(){
+            var self=this;
+            var bundleUrl = this.$getConfig().bundleUrl;
+            this.baseURL = apis.getBaseUrl(bundleUrl,true);
+
+            storage.getAllKeys(function(e){
+                if(e.result == 'success' && e.data.length){
+                    e.data.forEach(function(item){
+                        if(item.indexOf('search_') > -1){
+                            self.items.push(item.split('search_')[1]);
+                        }
+                    });
+                }
+            });
+
+            var hotClass = [
+                            {tags:'家常菜',
+                            tagurl:'http://www.photophoto.cn/m77/161/005/1610059394.jpg'},
+                            {tags:'私房菜',
+                            tagurl:'http://res.fashion.ifeng.com/attachments/2010/02/05/rd_rs_dbb85fab1290f9e1762e2ccffb6dcb7c.jpg'},
+                            {tags:'快手菜',
+                            tagurl:'http://sh.sinaimg.cn/2015/0923/U10201P18DT20150923102501.png'},
+                            {tags:'香辣',
+                            tagurl:'http://img3.redocn.com/tupian/20141029/qincairousi_3341515.jpg'},
+                            {tags:'热',
+                            tagurl:'http://npic7.edushi.com/cn/zixun/zh-chs/2016-01/16/e-2733900-s32-160114094056.png'},
+                            {tags:'凉菜',
+                            tagurl:'http://www.photophoto.cn/m77/161/003/1610030289.jpg'},
+                            {tags:'肉',
+                            tagurl:'http://tupian.enterdesk.com/uploadfile/2013/0912/20130912054939364.jpg'},
+                            {tags:'素食',
+                            tagurl:'http://i3.meishichina.com/attachment/201211/2/258077_1351829158nN82.jpg'},
+                            {tags:'烘焙',
+                            tagurl:'http://photocdn.sohu.com/20130630/Img380263657.jpg'},
+                            {tags:'小吃',
+                            tagurl:'http://henan.sinaimg.cn/2010/0906/20109614196.jpg'},
+                            {tags:'面',
+                            tagurl:'http://a2.att.hudong.com/21/81/01300534143102134578819707735.jpg'},
+                            {tags:'汤',
+                            tagurl:'http://baotang.tfysw.com/uploadfile/201106/20110626121939516.jpg'}
+                        ];
+            self.hotList=hotClass;
+            var methodClass=[
+                            {tags:'煎',
+                            tagurl:'http://food.lady8844.com/upload/20130919/dcd423b3be5219d73995884bf59202cd.jpg'},
+                            {tags:'炸',
+                            tagurl:'http://a3.att.hudong.com/66/61/01300000245029126983612250268.jpg'},
+                            {tags:'烧',
+                            tagurl:'http://img3.redocn.com/tupian/20141103/taijiaoshaofeichang_3380471.jpg'},
+                            {tags:'烤',
+                            tagurl:'http://res.benchengwang.cn/uploads/member/goods/65424/20140921101957997.jpg'},
+                            {tags:'蒸',
+                            tagurl:'http://img3.cache.netease.com/house/2014/4/19/2014041909524688ede.jpg'},
+                            {tags:'炒',
+                            tagurl:'http://recipe0.hoto.cn/pic/recipe/l/20/d2/184864_02c6ce.jpg'},
+                            {tags:'煮',
+                            tagurl:'http://i.weather.com.cn/images/trip/rmzt/wz/2013/02/21/48BB74A187FA2FDF09AB5E7F79C177B4.jpg'},
+                            {tags:'炖',
+                            tagurl:'http://i3.dpfile.com/2009-03-26/1772161_b.jpg(700x700)/thumb.jpg'}
+                        ];
+            self.methodList=methodClass;
+            var seasonClass=[
+                            {tags:'春季',
+                             tagurl:'http://hebei.sinaimg.cn/2013/0204/U7465P1275DT20130204155457.jpg'},
+                             {tags:'夏季',
+                              tagurl:'http://static.i3.xywy.com/cms/20150523/4bed6bc11b187e79ebc2069d7953aa4921923.jpg'},
+                             {tags:'秋季',
+                              tagurl:'http://files.bbs.e23.cn/forum/201209/10/153838szkgicshcibkspig.jpg'},
+                             {tags:'冬季',
+                              tagurl:'http://pic.baike.soso.com/p/20101215/20101215130742-212301247.jpg'}
+                        ];
+            self.seasonList=seasonClass;
+            var sceneClass=[
+                             {tags:'早餐',
+                              tagurl:'http://cate.cnr.cn/sytj/201108/W020110805381616473663.jpg'},
+                             {tags:'午餐',
+                              tagurl:'http://tw.tranews.com/Show/images/News/3255904_1.jpg'},
+                             {tags:'晚餐',
+                              tagurl:'http://pic12.nipic.com/20110225/2531170_100358053345_2.jpg'},
+                             {tags:'夜宵',
+                              tagurl:'http://i1.douguo.net/upload/diet/1/7/c/17c525dedba59b353d6694bc0000d67c.jpg'}
+                        ];
+            self.sceneList=sceneClass;
+            var personClass=[
+                             {tags:'老年人',
+                              tagurl:'http://img.ishuo.cn/1609/1474170312.jpg'},
+                             {tags:'孕妇',
+                              tagurl:'http://img.taopic.com/uploads/allimg/130516/235105-1305160HQ446.jpg'},
+                             {tags:'产妇',
+                              tagurl:'http://img.99.com.cn/uploads/151008/400_171015_1.jpg'},
+                             {tags:'儿童',
+                              tagurl:'http://i3.dpfile.com/pc/0f7df3c37b823be79e13abc331351e5a(700x700)/thumb.jpg'}
+                        ];
+            self.personList=personClass;
+
+        },
+        methods:{
+            search: function (e) {
+                var that=this;
+                if(!this.keywords) return;
+                storage.setItem('search_'+that.keywords,that.keywords,function(e){
+                    that.items.push(this.keywords);
+                });
+                var params = {
+                    'url':this.baseURL +'modules/detailList.js?id=' + this.keywords,
+                    'animated': 'true'
+                };
+                navigator.push(params, function (e) {
+                    //callback
+                });
+            },
+            oninput: function(event) {
+                  this.keywords = event.value;
+                  console.log('oninput', event.value);
+            },
+            change:function(e){
+                if(!e.value) return;
+                this.keywords=e.value;
+            },
+             onFoodItemClick: function (e) {
+                     var self = this;
+                     var itemid = e.target.attr.cid;
+                     var params = {
+                         'url':this.baseURL +'modules/step-detail.js?id=' + itemid,
+                         'animated': 'true'
+                     };
+                     navigator.push(params, function (e) {
+                         //callback
+                     });
+             },
+             detailList: function (e) {
+                     var self = this;
+                     var itemid = e.target.attr.cid;
+                     var params = {
+                         'url':this.baseURL +'modules/detailList.js?id=' + itemid,
+                         'animated': 'true'
+                     };
+                     navigator.push(params, function (e) {
+                         //callback
+                     });
+             }
+        }
+    }
+</script>

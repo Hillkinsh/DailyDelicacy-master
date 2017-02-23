@@ -1,0 +1,176 @@
+<template>
+    <scroller class='box'>
+          <div class='header' repeat="item in items">
+              <text class='header-foodName-style'>{{item.title}}</text>
+          </div>
+
+          <div class='meal' repeat="item in items"><!--菜的圆形照片-->
+              <image class='photoWIthName-image' src={{item.albums[0]}}></image>
+          </div>
+
+          <div class='ingre' >
+                 <text class='header-foodName-style'>食材</text>
+         </div>
+
+          <div class='ingredients' repeat="item in items">
+                  <text class='ingredients-text'>{{item.ingredients}};{{item.burden}}</text>
+          </div>
+
+          <div class='method'>
+            <text class='header-foodName-style'>方法步骤</text>
+          </div>
+
+          <div class='mealList'><!--做菜步骤123-->
+            <div class='mealListContnet' repeat="item in itemSteps">
+              <div>
+                  <text class='mealListContnet-step-text'>{{item.step}}</text>
+              </div>
+              <div>
+                <img class='mealListContnet-img' src={{item.img}}></img>
+              </div>
+            </div>
+          </div>
+    </scroller>
+ </template>
+  <style>
+
+      .box {
+        flex-direction: column;
+        background-color: wheat;
+      }
+      .header{
+        height: 80;
+        width: 750;
+        position:fixed;
+        top:0px;
+        left:0px;
+        right:0px;
+        background-color: white;
+        align-items:center;
+      }
+      .header-foodName-style{
+        font-size: 40;
+        padding-top:15;
+        font-family:STKaiti;/* TODO 字体设置;*/
+      }
+      .meal{
+        align-items:center;
+        position:relative;
+        margin-top:100;
+      }
+      .photoWIthName-image{
+        width: 400;
+        height: 400;
+        border-radius:200px;
+      }
+      .ingre{
+        position:relative;
+        padding:20;
+      }
+      .ingredients{
+        border-bottom-width: 1;
+        border-bottom-color: #efefef;
+        border-top-width: 1;
+        border-top-color: #efefef;
+        width:750;
+        padding:20;
+      }
+      .ingredients-text{
+          margin-left: 20;
+          lines: 4;
+          font-size: 35;
+          line-height: 50;
+          font-family:STKaiti;/* TODO 字体设置;*/
+
+      }
+      .method{
+        position:relative;
+        padding:20;
+      }
+      .mealList{
+        width: 750;
+        padding: 10;
+      }
+      .mealListContnet{
+        flex-direction: column;
+        padding: 30;
+        border-bottom-width: 1;
+        border-bottom-color: #efefef;
+        border-top-width: 1;
+        border-top-color: #efefef;
+      }
+      .mealListContnet-step-text{
+          font-size: 35;
+          line-height: 50;
+          font-family:STKaiti;/* TODO 字体设置;*/
+      }
+      .mealListContnet-img{
+        width: 620;/*475*/
+        margin:20;
+        height:400;
+        border-radius:50px;
+      }
+
+
+  </style>
+
+
+<script>
+      var dom = require('@weex-module/dom') || {}
+      var stream = require('@weex-module/stream') || {}
+      var modal = require('@weex-module/modal') || {}
+      var apis = require('../common/api');
+      var SEARCH_URL = 'http://apis.juhe.cn/cook/query?&pn=&rn=&albums=&=&key=02679548e0e9bbce015c132666f8ea9e'
+      module.exports = {
+   //做好了关于做菜步骤的地方。
+    data: {
+          foodMenu: [],//实现foodMenu随着时间自变。
+          loadingDisplay: 'show',
+          loadingText: 'Loading...',
+          itemSteps:[],
+          items:[],
+    },
+    created: function () {
+        
+            var self = this;
+            var bundleUrl = this.$getConfig().bundleUrl;
+             var contentId = self.getParameterByName('id', bundleUrl);
+            var urlForTran=SEARCH_URL+'&menu='+contentId;
+            self.renderData(urlForTran)
+           
+          },
+          methods: {
+             renderData: function (url) {
+             var self = this
+             stream.fetch({
+              method: 'GET',
+              url: url,
+              type:'json'
+          }, function(res) {
+            var results = res.data.result.data || []
+
+            if (Array.isArray(results)) {
+                self.items.push(results[0])
+
+            }
+            if(Array.isArray(results[0].steps)){
+                            for(var i=0;i<results[0].steps.length;i++){
+                               self.itemSteps.push(results[0].steps[i])
+                            }
+                        }
+        },function(res){
+
+        })
+      },
+      getParameterByName: function (name, url) {
+                name = name.replace(/[\[\]]/g, "\\$&");
+                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+                var answer = regex.exec(url);
+                
+                return answer[2];
+            }
+
+    }
+     }
+   </script>
+

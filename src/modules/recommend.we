@@ -1,0 +1,169 @@
+<template>
+  <div>
+    <slider class="slider" interval="3000" auto-play="true">
+      <div repeat="item in sliderList">
+        <image class="img" src="{{item}}"></image>
+      </div>
+    </slider>
+    <div style="text-align:center;">
+      <text style="text-align:center;" class="title">今日推荐</text>
+    </div>
+    <scroller>
+           <div class="box" append="tree">
+                <div repeat="item in items" id="item-{{$index}}">
+                    <div class="item-imgbox">
+                      <img class="item-img" src="{{item.albums[0]}}" alt="" onclick="onFoodItemClick" cid="{{item.title}}" />
+                      <text style="text-align:center;margin-top:10;">{{item.title}}</text>
+                    </div>
+                </div>
+           </div>
+    </scroller>
+  </div>
+</template>
+<style>
+  .slider {
+      flex-direction: row;
+      padding: 20;
+      width: 750;
+      height: 350;
+    }
+  .img {
+    width: 710;
+    height: 350;
+  }
+  .title {
+      lines: 1;
+      text-overflow: ellipsis;
+      font-size: 40;
+      color: #2D2D2D;
+      line-height: 40;
+      font-family:STKaiti;/* TODO 字体设置;*/
+  }
+  .box{
+    flex-direction: row;
+    flex-wrap:wrap;
+  }
+  .item-imgbox {
+    height: 310;
+    width: 280;
+    margin-left: 57;
+    margin-top: 25;
+    margin-right:38;
+
+  }
+  .item-img {
+    width: 255;
+    height: 255;
+    border-radius:50px;
+  }
+</style>
+
+<script>
+  var dom = require('@weex-module/dom') || {}
+  var stream = require('@weex-module/stream') || {}
+  var modal = require('@weex-module/modal') || {}
+  var apis = require('../common/api');
+  var navigator = require('@weex-module/navigator');
+  var SEARCH_URL = 'http://apis.juhe.cn/cook/query?&pn=&rn=&albums=&=&key=02679548e0e9bbce015c132666f8ea9e'
+  module.exports = {
+    data: {
+      foodMenu: [],//实现foodMenu随着时间自变。
+      loadingDisplay: 'show',
+      loadingText: 'Loading...',
+      items:[],
+      sliderList: []
+    },
+  created: function () {
+        var self=this;
+        var dateToday = new Date();
+        var bundleUrl = this.$getConfig().bundleUrl;
+        this.baseURL = apis.getBaseUrl(bundleUrl,true);
+
+        var sliderUrl= [['http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/MNiBcvZma7aZCEddtUl1wqsbensn7KsLoODZbqZ7meI!/r/dK4AAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/5KPTIJoSbMD9NaMjQhXDZOvf1yZhBYjlFuEufTSNqbU!/r/dPYAAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/T*lu9M.6QwqUyySpKrAnprPmMxZBosYld1kB6NPD5ks!/r/dCABAAAAAAAA'],
+                        ['http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/Z6ZeGASrgcgWtZVq6D1LhbYwLoUnQw7FE6FzNW.rPOs!/r/dB8BAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/DfzetJwWE83H99cOHSPPneX1Gg*NntCN03o0asBVNEQ!/r/dCABAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/Z6aqWWbWwmWFKD8UU9Ka*gOIfblgusSd2rYqFJ.0Elg!/r/dCABAAAAAAAA'],
+                        ['http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/dAI2MBC6NUzOjbO7mtpAKi5arce6e8s*kv2KM6ngKxQ!/r/dPwAAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/139msVXahS*pcziRl0ffXGE3Ci6Z4.AyhXhCct3dT8I!/r/dK4AAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/a9LPu6Wu8be4CGjuPiEon*7j8qOdDRljz7IviiXPFxY!/r/dB8BAAAAAAAA'],
+                        ['http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/cGQuzhu106gi8XOiTfD24Yt1ybeU4oD6ckhrWUQ6G8M!/r/dCABAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/PHgiSCtbiLQ.01*SSqS54QKk5X59NBcgHyMrVk*1NLM!/r/dK0AAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/K3b0q8q*bO7UALhdqsGUoz9Bpao9UIcUyM5fOjwo448!/r/dPgAAAAAAAAA'],
+                        ['http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/hGmajiG8.Hp9.3pJz2MQY6Qa9mBYFd44Ux5mKoa7d5w!/r/dLIAAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/WGYLyRskJmUlTcBJEfZ76g8DjkK4tGWbQJ9wvYMRktw!/r/dPgAAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/kuKBd7jXRS2mRXdgHvILoAKcQ*AFMZiAKa0TpV7u1Cg!/r/dPsAAAAAAAAA'],
+                        ['http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/Xrbm9.L3kTSJMX*is.qSt.vSuYDQvuUARc5tiTXX7Q4!/r/dB8BAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/IzzQOg81qfpfHaNU7oe7RBPtOFM7yDV0N0w6wTHtn2Y!/r/dLAAAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/JQ5RWzhx3MCMjSaijz6tw7gK4aW9ZS9XGOo9JCYJSYc!/r/dLAAAAAAAAAA'],
+                        ['http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/I.i.pfZi0jmfHecPcXtQYyuSDch4F96kbIqqH0mPNig!/r/dCABAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/mpHghszojX0uSTQC5D8SrZAJAEldlxrlU7NMnfovHWU!/r/dPYAAAAAAAAA',
+                         'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/d4qyP.baYsZBZ425P97F.6gXDoJFBlUxgzQun9Jx9to!/r/dKYAAAAAAAAA']];
+        var foodData = [['番茄炒西兰花','红烧肉','酸辣汤','小鸡炖蘑菇'],['清炒','糖醋排骨','猪蹄汤','水煮肉片'],
+                        ['红豆薏米粥','清蒸鱼','五美汤','剁椒鱼头'],['清炒山药西兰花','西红柿炒鸡蛋','菠菜粉丝','荷包蛋'],
+                        ['泡菜饼','蒜香排骨','香煎菠菜蛋饼','香辣虾'],['莴笋炒鸡蛋','鱼香茄子','酸辣黄瓜','糖醋莲菜'],
+                        ['香酥炸南瓜','土豆炖牛肉','粉蒸土豆丝','豆角茄子'],['荷塘小炒','板栗红烧肉','番茄汤','炸酱面'],
+                        ['番茄菜花','红烧鲫鱼','白斩鸡','南瓜饼'],['番茄豆腐','红烧土豆','糖醋三丝','红豆糕'],
+                        ['韭菜鸡蛋','酱烧茄子','奶香红豆糕','咖喱饭'],['酸辣土豆丝','辣炒花蛤','狮子头','蛋包饭'],
+                        ['红烧茄子','辣子鸡','拔丝苹果','春卷'],['丝瓜炒蛋','可乐鸡翅','番茄汤','馄饨'],
+                        ['地三鲜','剁椒鱼头','鱼头豆腐汤','肠粉'],['蒜香荷兰豆','麻婆豆腐','上汤娃娃菜','烧麦'],
+                        ['清炒土豆丝','红烧狮子头','山药排骨汤','沙拉'],['凉拌金针菇','蒜苔炒腊肉','银耳羹','披萨'],
+                        ['醋溜白菜','韭菜炒鸡蛋','莲藕炖鸡汤','海带排骨汤'],['清炒南瓜丝','木耳炒山药','豆腐汤','绿豆粥'],
+                        ['西芹百合','酱排骨','丝瓜汤','山药粥'],['红烧冬瓜','家常红烧猪蹄','小米银耳羹','糍粑'],
+                        ['山药萝卜汤','家常红烧排骨','紫菜汤','水饺'],['香椿拌豆腐','咖喱鸡翅','海参汤','叉烧包'],
+                        ['蒜蓉蒸丝瓜','蜜汁鸡翅','萝卜汤','手抓饼'],['拔丝地瓜','锅塌豆腐','苹果汤','玉米饼'],
+                        ['家常豆腐','芋头糕','祛湿汤','糖醋鱼'],['香辣海带丝','电饭煲焖鸡','基础高汤','青椒肉丝'],
+                        ['丝瓜炒豆腐','黄瓜炒猪肝','家常三宝汤','梅菜扣肉'],['酸辣土豆丝','苹果汤','木耳炒山药','红烧牛肉'],
+                        ['牛仔骨烧土豆','酱大骨','猪肝土豆片','手撕包菜'],['黄瓜卷','油饼','胡辣汤','香菇炒肉']];
+        for(var i=0;i<sliderUrl[dateToday.getDay()].length;i++){
+                        self.sliderList.push(sliderUrl[dateToday.getDay()][i]);
+                        console.log(sliderUrl[dateToday.getDay()][i]);
+        }
+        for(var i=0;i<foodData[dateToday.getDate()-1].length;i++){
+              self.foodMenu.push(foodData[dateToday.getDate()-1][i]);
+              console.log(foodData[dateToday.getDate()-1][i]);
+        }
+      var url0 = SEARCH_URL + '&menu=' + self.foodMenu[0]
+      var url1 = SEARCH_URL + '&menu=' + self.foodMenu[1]
+      var url2 = SEARCH_URL + '&menu=' + self.foodMenu[2]
+      var url3 = SEARCH_URL + '&menu=' + self.foodMenu[3]
+      self.renderData(url0)
+      self.renderData(url1)
+      self.renderData(url2)
+      self.renderData(url3)
+      },
+      methods: {
+        renderData: function (url) {
+        var self = this
+        stream.fetch({
+          method: 'GET',
+          url: url,
+          type:'json'
+        }, function(res) {
+            var results = res.data.result.data || []
+
+            if (Array.isArray(results)) {
+                self.items.push(results[0])
+                console.log("results is ok!")
+                console.log(results[0].albums[0])
+
+            }
+        },function(res){
+
+        })
+      },
+        onFoodItemClick: function (e) {
+                var self = this;
+                var itemid = e.target.attr.cid;
+                var params = {
+                    'url':this.baseURL +'modules/step-detail.js?id=' + itemid,
+                    'animated': 'true'
+                };
+                navigator.push(params, function (e) {
+                    //callback
+                });
+        }
+      }
+    }
+  </script>

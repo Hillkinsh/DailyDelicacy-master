@@ -1,0 +1,206 @@
+
+<template>
+       <scroller class="search_res">
+           <div>
+               <text if="{{NotFoundThisItem}}">该菜品尚未收录，请尝试其他。</text>
+           </div>
+
+            <div class="search_item" repeat="item in searchRes">
+              <div  class="search-items" onclick="onFoodItemClick"  cid="{{item.title}}">
+                <div class="item-imgbox">
+                    <img class="item-img" src="{{item.albums[0]}}" alt=""/>
+                </div>
+                <div class="item-info">
+                  <div class="item-info-detail">
+                      <text class="title">{{item.title}}</text>
+                      <div class="detail-info">
+                         <text class="desc">{{item.imtro}}</text>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+      </scroller>
+</template>
+
+<style>
+    .search{
+      flex-direction: row;
+    }
+    .search_box {
+      margin:10;
+      margin-left:35;
+      padding:10;
+      width:575;
+      height:85;
+      border-radius:30px;
+      border-color:#1afa29;
+      border-width:1;
+      border-style:solid;
+    }
+    .search_box_s {
+      margin:10;
+      width:85;
+      height:85;
+    }
+    .bgPic{
+      top:105;
+      margin-left:5;
+      margin-right:5;
+      position:absolute;
+    }
+    .bgPicture{
+      width:740;
+      height:1100;
+    }
+    .his{
+      align-items:center;
+    }
+    .search_res{
+      flex-direction: column;
+      position:absolute;
+      margin-left:5;
+      width: 740;
+      margin-right:5;
+
+  }
+    .search_item{
+      flex-direction: row;
+      padding:5;
+      border-bottom-width: 1;
+      border-bottom-color: #efefef;
+      background-color: wheat;
+
+  }
+    .search-items{
+      flex-direction: row;
+    }
+  .item-imgbox {
+      height: 250;
+      width: 250;
+      margin-right:20;
+  }
+    .item-img {
+      width: 250;
+      height: 250;
+      border-radius:50px;
+    }
+    .item-info {
+      height: 250;
+      width: 410;
+      justify-content: center;
+      position: relative;
+  }
+  .item-info-detail {
+    position: relative;
+    color: #A2A2A2;
+  }
+  .title {
+    lines: 1;
+    text-overflow: ellipsis;
+    font-size: 32;
+    color: #2D2D2D;
+    line-height: 40;
+  }
+  .detail-info {
+    margin-top: 15;
+  }
+  .desc {
+    lines: 5;
+    text-overflow: ellipsis;
+    font-size: 26;
+    line-height: 30;
+    color: #A2A2A2;
+  }
+</style>
+<script>
+      var storage=require('@weex-module/storage');
+      var dom = require('@weex-module/dom') || {}
+      var stream = require('@weex-module/stream') || {}
+      var modal = require('@weex-module/modal') || {}
+      var navigator = require('@weex-module/navigator');
+      var apis = require('../common/api');
+      var SEARCH_URL = 'http://apis.juhe.cn/cook/query?&pn=&rn=&albums=&=&key=02679548e0e9bbce015c132666f8ea9e'
+    module.exports = {
+        data : {
+            NotFoundThisItem:false,
+            searchRes:[],
+            itemSteps:[]
+        },
+        created:function(){
+            var self = this;
+            var bundleUrl = this.$getConfig().bundleUrl;
+            this.baseURL = apis.getBaseUrl(bundleUrl,true);
+            
+            var contentId = self.getParameterByName('id', bundleUrl);
+            var urlForTran=SEARCH_URL+'&menu='+contentId;
+            self.renderData(urlForTran)
+        },
+        methods:{
+            renderData: function (url) {
+                var self = this
+                stream.fetch({
+                  method: 'GET',
+                  url: url,
+                  type:'json'
+                }, function(res) {
+                if(res.data.resultcode==202){
+                modal.alert({
+                    'message':'很抱歉该菜品尚未收录，请尝试其他',
+                    'okTitle':'YES'
+                });
+                }else{
+                    var results = res.data.result.data || []
+                    if (Array.isArray(results)) {
+                    self.searchRes=[];
+                    for(var i=0;i<results.length;i++){
+                    self.searchRes.push(results[i]);
+                     }
+                   }
+                }
+
+
+                },function(res){
+
+                })
+            },
+             onFoodItemClick: function (e) {
+                     var self = this;
+                     var itemid = e.target.attr.cid;
+                     var params = {
+                         'url':this.baseURL +'modules/step-detail.js?id=' + itemid,
+                         'animated': 'true'
+                     };
+                     navigator.push(params, function (e) {
+                         //callback
+                     });
+             },
+             getParameterByName: function (name, url) {
+                      name = name.replace(/[\[\]]/g, "\\$&");
+                      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+                      var answer = regex.exec(url);
+                      //return answer[2];
+                      //优化搜索。
+                      
+                switch(answer[2])
+                    {
+                    case '家常菜':return '家常'; break;
+                    case '私房菜':return '私房'; break;
+                    case '川菜':return '川'; break;
+                    case '热菜':return '热'; break;
+                    case '私房菜':return '私房'; break;
+                    case '肉类':return '肉'; break;
+                    case '面食':return '面'; break;
+                    case '夜宵':return '夜'; break;
+                    case '老年人':return '骨汤'; break;
+                    case '孕妇':return '孕妈'; break;
+                    case '产妇':return '补气'; break;
+                    case '青少年':return '蛋'; break;
+                    default:return answer[2];
+                    }
+             }
+        }
+    }
+</script>
+

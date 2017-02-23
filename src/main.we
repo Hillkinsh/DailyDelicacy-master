@@ -1,0 +1,56 @@
+<template>
+  <div>
+    
+      <div class="startPage" onclick="turnToMain">
+        <image class="img" src="{{startImg}}"></image>
+        <text class="title">点击进入</text>
+      </div>
+      
+  </div>
+</template>
+
+<style>
+  .img {
+    width: 749;
+    height: 100%;
+  }
+  .title {
+    position: absolute;
+    top: 1020;
+    left: 550;
+    font-size: 30;
+  }
+  .startPage {
+    flex-direction: row;
+    width: 749;
+    height: 1200;
+  }
+  
+</style>
+
+<script>
+require('weex-components');
+var apis = require('./common/api');
+var navigator = require('@weex-module/navigator');
+  module.exports = {
+      data: {
+        startImg:'http://r.photo.store.qq.com/psb?/V10fxxpZ03oqxO/a2XnOuS.qgi9HgZXb*i49XLHjkhc0kU5VCnINo7Gunw!/r/dCABAAAAAAAA'
+    },
+       created:function(){
+        var self=this;
+        var bundleUrl = this.$getConfig().bundleUrl;
+        this.baseURL = apis.getBaseUrl(bundleUrl,true);
+     },
+    methods:{
+         turnToMain:function(){
+            var params = {
+                    'url':this.baseURL +'content.js',
+                    'animated': 'true'
+                };
+              navigator.push(params, function (e) {
+                    //callback
+                });
+         }
+     }
+  }
+</script>
